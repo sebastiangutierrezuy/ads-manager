@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rendimiento — Centro de Publicidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #E6E2D8;
+    --navy: #2B2F33;
+    --navy-soft: #3A3F45;
+    --gray: #898A8E;
+    --gray-soft: #C8C5BD;
+    --light-bg: #F5F3EF;
+    --white: #FFFFFF;
+    --red: #C4484A;
+    --amber: #C49B48;
+    --green: #5B8A6E;
+    --font-display: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--navy);
+    background: var(--light-bg);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+  }
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+  .app {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ══════════ SIDEBAR ══════════ */
+  .sidebar {
+    background: var(--navy);
+    color: var(--white);
+    padding: 28px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .brand { padding: 0 24px 28px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .brand-name { font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+  .brand-tag { font-size: 11px; color: var(--gray-soft); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+  .nav-section { padding: 24px 0 8px; }
+  .nav-label { font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; color: var(--gray); padding: 0 24px 10px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 24px;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--white); }
+  .nav-item.active {
+    background: rgba(255,255,255,0.06);
+    color: var(--white);
+    border-left-color: var(--amber);
+  }
+  .nav-icon { width: 16px; height: 16px; opacity: 0.8; flex-shrink: 0; }
+  .nav-foot {
+    margin-top: auto;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--amber);
+    display: grid; place-items: center;
+    font-weight: 600; color: var(--navy); font-size: 13px;
+  }
+  .avatar-info .name { font-size: 13px; }
+  .avatar-info .biz { font-size: 11px; color: var(--gray-soft); }
+
+  /* ══════════ MAIN ══════════ */
+  .main { padding: 32px 40px 80px; max-width: 1280px; }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .top h1 {
+    font-family: var(--font-display);
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+  .top .subline {
+    color: var(--gray);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  .top-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* Period selector */
+  .period {
+    display: inline-flex;
+    background: var(--white);
+    border: 1px solid var(--gray-soft);
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .period button {
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray);
+    transition: all 0.2s;
+  }
+  .period button.active {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .pill {
+    background: var(--white);
+    border: 1px solid var(--gray-soft);
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--navy);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .pill.active-period {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
+  /* ══════════ COMPARISON STRIP ══════════ */
+  .compare-strip {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 8px;
+    margin-bottom: 36px;
+    border: 1px solid rgba(0,0,0,0.04);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .compare-cell {
+    padding: 20px 22px;
+    border-right: 1px solid var(--light-bg);
+    position: relative;
+  }
+  .compare-cell:last-child { border-right: none; }
+  .compare-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 12px;
+  }
+  .compare-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .compare-now {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .compare-prev {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.3;
+    text-align: right;
+  }
+  .compare-prev strong { color: var(--navy-soft); font-weight: 500; }
+  .compare-delta {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-top: 8px;
+    display: inline-block;
+  }
+  .compare-delta.up { background: rgba(91,138,110,0.12); color: var(--green); }
+  .compare-delta.down-good { background: rgba(91,138,110,0.12); color: var(--green); }
+  .compare-delta.down { background: rgba(196,72,74,0.10); color: var(--red); }
+  .spark { margin-top: 14px; height: 30px; }
+  .spark svg { width: 100%; height: 100%; display: block; }
+  .spark .line { fill: none; stroke-width: 1.5; }
+  .spark .area { opacity: 0.15; }
+
+  /* ══════════ MAIN CHART ══════════ */
+  .section { margin-bottom: 40px; }
+  .sec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .sec-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .sec-sub { font-size: 13px; color: var(--gray); margin-top: 4px; }
+
+  .card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 26px 28px;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .metric-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--light-bg);
+    padding: 4px;
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  .metric-tab {
+    padding: 8px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray);
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .metric-tab.active {
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .chart-wrap {
+    position: relative;
+    height: 320px;
+    margin-top: 22px;
+  }
+  .chart-wrap svg { width: 100%; height: 100%; display: block; }
+  .chart-axis text { font-family: var(--font-sans); font-size: 10px; fill: var(--gray); }
+  .chart-line { fill: none; stroke: var(--green); stroke-width: 2; }
+  .chart-area { fill: rgba(91,138,110,0.10); }
+  .chart-line-prev { fill: none; stroke: var(--gray-soft); stroke-width: 1.5; stroke-dasharray: 3 3; }
+  .chart-dot { fill: var(--white); stroke: var(--green); stroke-width: 2; }
+  .annotation {
+    fill: var(--amber);
+    stroke: var(--white);
+    stroke-width: 2;
+  }
+  .annotation-line {
+    stroke: var(--amber);
+    stroke-width: 1;
+    stroke-dasharray: 2 2;
+    opacity: 0.6;
+  }
+  .legend {
+    display: flex;
+    gap: 22px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--gray);
+    align-items: center;
+  }
+  .legend-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend-line {
+    display: inline-block;
+    width: 14px; height: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ══════════ FUNNEL ══════════ */
+  .funnel-wrap {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 28px 32px;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .funnel-intro {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 26px;
+    max-width: 640px;
+  }
+  .funnel-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .fstep {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 18px;
+  }
+  .fstep-bar {
+    background: linear-gradient(90deg, var(--navy), var(--navy-soft));
+    color: var(--white);
+    padding: 18px 22px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+  }
+  .fstep:nth-child(2) .fstep-bar { background: linear-gradient(90deg, #404750, #4d555f); width: 78%; }
+  .fstep:nth-child(3) .fstep-bar { background: linear-gradient(90deg, #5d666f, #6b747e); width: 56%; }
+  .fstep:nth-child(4) .fstep-bar { background: linear-gradient(90deg, var(--green), #6e9e83); width: 28%; }
+  .fstep-name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .fstep-count {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .fstep-meta {
+    font-size: 12px;
+    color: var(--gray);
+    text-align: right;
+    min-width: 130px;
+  }
+  .fstep-meta strong { color: var(--navy); font-weight: 600; }
+  .fstep-arrow {
+    font-size: 11px;
+    color: var(--gray);
+    padding: 2px 0 2px 22px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .fstep-arrow::before {
+    content: '↓';
+    position: absolute;
+    left: 6px;
+    top: 0;
+    font-size: 14px;
+    color: var(--gray-soft);
+  }
+
+  /* ══════════ HEATMAP ══════════ */
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 22px;
+  }
+  .hm-day-label, .hm-time-label {
+    font-size: 10px;
+    color: var(--gray);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 4px 0;
+  }
+  .hm-time-label { text-align: right; padding-right: 8px; }
+  .hm-cell {
+    aspect-ratio: 2 / 1;
+    border-radius: 4px;
+    background: rgba(91,138,110,var(--intensity, 0.05));
+    transition: transform 0.15s;
+    cursor: pointer;
+  }
+  .hm-cell:hover { transform: scale(1.06); outline: 1px solid var(--navy); }
+  .hm-legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 18px;
+  }
+  .hm-scale { display: flex; gap: 3px; }
+  .hm-scale-cell {
+    width: 18px; height: 12px;
+    border-radius: 2px;
+  }
+  .hm-callout {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--light-bg);
+    border-radius: 10px;
+    border-left: 3px solid var(--green);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .hm-callout strong { color: var(--navy); font-weight: 600; }
+
+  /* ══════════ BREAKDOWN GRID ══════════ */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .bd-card { padding: 24px 26px; }
+  .bd-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .bd-sub {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 22px;
+  }
+  .bd-row {
+    margin-bottom: 18px;
+  }
+  .bd-row:last-child { margin-bottom: 0; }
+  .bd-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .bd-row-name {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .bd-row-name .ico {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    background: var(--light-bg);
+    display: grid; place-items: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--gray);
+  }
+  .bd-row-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .bd-row-bar {
+    height: 6px;
+    background: var(--light-bg);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bd-row-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .bd-row-meta {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+  .bd-row-meta strong { color: var(--navy); font-weight: 500; }
+
+  /* Donut device */
+  .device-donut {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 18px;
+  }
+  .donut-mini { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+  .donut-mini svg { transform: rotate(-90deg); }
+  .donut-center {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    text-align: center;
+  }
+  .donut-center .big {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .donut-center .lbl {
+    font-size: 10px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+  .device-stats { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+  .device-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .device-stat span:last-child { color: var(--gray); }
+
+  /* ══════════ TABLE ══════════ */
+  .tbl-card { padding: 0; overflow: hidden; }
+  .tbl-head {
+    padding: 22px 26px 18px;
+    border-bottom: 1px solid var(--light-bg);
+  }
+  table.perf {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.perf th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--light-bg);
+    color: var(--gray);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  table.perf th.right { text-align: right; }
+  table.perf th .sort {
+    margin-left: 4px;
+    opacity: 0.4;
+    font-size: 9px;
+  }
+  table.perf td {
+    padding: 16px;
+    border-bottom: 1px solid var(--light-bg);
+    vertical-align: middle;
+  }
+  table.perf tr:last-child td { border-bottom: none; }
+  table.perf tr:hover td { background: rgba(245,243,239,0.5); }
+  table.perf td.right { text-align: right; }
+  .tbl-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tbl-name .nm { font-weight: 500; }
+  .tbl-name .meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .badge.good { background: rgba(91,138,110,0.12); color: var(--green); }
+  .badge.warn { background: rgba(196,155,72,0.15); color: var(--amber); }
+  .badge.bad { background: rgba(196,72,74,0.10); color: var(--red); }
+  .badge.off { background: var(--light-bg); color: var(--gray); }
+  .badge .dot { width: 5px; height: 5px; border-radius: 50%; }
+  .badge.good .dot { background: var(--green); }
+  .badge.warn .dot { background: var(--amber); }
+  .badge.bad .dot { background: var(--red); }
+  .badge.off .dot { background: var(--gray); }
+
+  .num {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+  .delta-mini {
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 6px;
+  }
+  .delta-mini.up { color: var(--green); }
+  .delta-mini.down { color: var(--red); }
+
+  .tbl-spark { width: 70px; height: 24px; }
+  .tbl-spark svg { width: 100%; height: 100%; display: block; }
+
+  .foot-note {
+    text-align: center;
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 60px;
+    letter-spacing: 0.5px;
+  }
+
+  /* responsive */
+  @media (max-width: 1024px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .compare-strip, .grid-3 { grid-template-columns: 1fr; }
+    .heatmap-grid { grid-template-columns: 50px repeat(7, 1fr); }
+    table.perf { font-size: 12px; }
+    table.perf th, table.perf td { padding: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name">Atlántico</div>
+      <div class="brand-tag">Centro de publicidad</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Vista general</div>
+      <a class="nav-item" href="portal-ads-mock.html">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9M5 10v10h14V10"/></svg>
+        Resumen de hoy
+      </a>
+      <a class="nav-item active">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l3-3 4 4 5-5"/></svg>
+        Rendimiento
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Tu publicidad</div>
+      <a class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        Campañas activas
+      </a>
+      <a class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+        Anuncios
+      </a>
+      <a class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M16 11l2 2 4-4"/></svg>
+        Audiencia
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Asistente</div>
+      <a class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 14.7 7.1 17.2 8 11.7 4 7.8l5.5-.8L12 2z"/></svg>
+        Recomendaciones
+      </a>
+      <a class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        Ayuda
+      </a>
+    </div>
+
+    <div class="nav-foot">
+      <div class="avatar">CL</div>
+      <div class="avatar-info">
+        <div class="name">Cliente</div>
+        <div class="biz">Negocio · Meta conectado</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <main class="main">
+
+    <!-- TOP -->
+    <div class="top">
+      <div>
+        <h1>Rendimiento</h1>
+        <div class="subline">Cómo funcionó tu publicidad y dónde podés mejorar.</div>
+      </div>
+      <div class="top-actions">
+        <div class="period">
+          <button>Hoy</button>
+          <button>7 días</button>
+          <button class="active">Últimos 30 días</button>
+          <button>3 meses</button>
+          <button>Personalizar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARISON STRIP -->
+    <div class="compare-strip">
+
+      <div class="compare-cell">
+        <div class="compare-label">Inversión</div>
+        <div class="compare-row">
+          <div class="compare-now">$248.700</div>
+          <div class="compare-prev">vs período anterior<br><strong>$221.400</strong></div>
+        </div>
+        <span class="compare-delta up">▲ 12,3%</span>
+        <div class="spark">
+          <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+            <path class="line" stroke="#5B8A6E" d="M0,22 L12,18 L24,20 L36,15 L48,17 L60,12 L72,14 L84,9 L96,11"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="compare-cell">
+        <div class="compare-label">Personas alcanzadas</div>
+        <div class="compare-row">
+          <div class="compare-now">124K</div>
+          <div class="compare-prev">vs período anterior<br><strong>98K</strong></div>
+        </div>
+        <span class="compare-delta up">▲ 26,5%</span>
+        <div class="spark">
+          <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+            <path class="line" stroke="#5B8A6E" d="M0,25 L12,22 L24,20 L36,18 L48,14 L60,10 L72,12 L84,7 L96,5"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="compare-cell">
+        <div class="compare-label">Personas interesadas</div>
+        <div class="compare-row">
+          <div class="compare-now">347</div>
+          <div class="compare-prev">vs período anterior<br><strong>358</strong></div>
+        </div>
+        <span class="compare-delta down">▼ 3,1%</span>
+        <div class="spark">
+          <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+            <path class="line" stroke="#C4484A" d="M0,8 L12,12 L24,10 L36,16 L48,14 L60,20 L72,17 L84,22 L96,19"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="compare-cell">
+        <div class="compare-label">Costo por interesado</div>
+        <div class="compare-row">
+          <div class="compare-now">$716</div>
+          <div class="compare-prev">vs período anterior<br><strong>$618</strong></div>
+        </div>
+        <span class="compare-delta down">▲ 15,9% (te cuesta más)</span>
+        <div class="spark">
+          <svg viewBox="0 0 100 30" preserveAspectRatio="none">
+            <path class="line" stroke="#C4484A" d="M0,18 L12,16 L24,15 L36,12 L48,14 L60,9 L72,11 L84,7 L96,5"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MAIN CHART -->
+    <section class="section">
+      <div class="card">
+        <div class="sec-head" style="margin-bottom: 0;">
+          <div>
+            <h2 class="sec-title">Evolución en el tiempo</h2>
+            <div class="sec-sub">Comparado con los 30 días anteriores. Los puntos amarillos son cambios que hiciste.</div>
+          </div>
+          <div class="metric-tabs">
+            <button class="metric-tab">Inversión</button>
+            <button class="metric-tab active">Personas alcanzadas</button>
+            <button class="metric-tab">Clics</button>
+            <button class="metric-tab">Personas interesadas</button>
+            <button class="metric-tab">Costo por interesado</button>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <svg viewBox="0 0 800 320" preserveAspectRatio="none">
+            <!-- grid -->
+            <g stroke="#E6E2D8" stroke-width="1">
+              <line x1="50" y1="40" x2="790" y2="40"/>
+              <line x1="50" y1="110" x2="790" y2="110"/>
+              <line x1="50" y1="180" x2="790" y2="180"/>
+              <line x1="50" y1="250" x2="790" y2="250"/>
+              <line x1="50" y1="290" x2="790" y2="290"/>
+            </g>
+            <!-- y axis -->
+            <g class="chart-axis">
+              <text x="42" y="44" text-anchor="end">8K</text>
+              <text x="42" y="114" text-anchor="end">6K</text>
+              <text x="42" y="184" text-anchor="end">4K</text>
+              <text x="42" y="254" text-anchor="end">2K</text>
+              <text x="42" y="294" text-anchor="end">0</text>
+            </g>
+            <!-- previous period dashed -->
+            <polyline class="chart-line-prev" points="60,200 110,210 160,195 210,205 260,190 310,200 360,185 410,195 460,180 510,185 560,170 610,175 660,165 710,180 760,170"/>
+            <!-- current filled -->
+            <path class="chart-area" d="M60,210 L110,195 L160,180 L210,165 L260,170 L310,150 L360,140 L410,145 L460,120 L510,110 L560,100 L610,115 L660,90 L710,75 L760,70 L760,290 L60,290 Z"/>
+            <polyline class="chart-line" points="60,210 110,195 160,180 210,165 260,170 310,150 360,140 410,145 460,120 510,110 560,100 610,115 660,90 710,75 760,70"/>
+
+            <!-- annotation: budget increase on day 9 -->
+            <line class="annotation-line" x1="460" y1="40" x2="460" y2="120"/>
+            <circle class="annotation" cx="460" cy="120" r="6"/>
+            <text x="464" y="56" font-size="11" fill="#C49B48" font-weight="600">+ Subiste presupuesto</text>
+
+            <!-- annotation: new creative on day 14 -->
+            <line class="annotation-line" x1="660" y1="40" x2="660" y2="90"/>
+            <circle class="annotation" cx="660" cy="90" r="6"/>
+            <text x="664" y="60" font-size="11" fill="#C49B48" font-weight="600">+ Nuevo anuncio</text>
+
+            <!-- dots -->
+            <g>
+              <circle class="chart-dot" cx="60" cy="210" r="3.5"/>
+              <circle class="chart-dot" cx="160" cy="180" r="3.5"/>
+              <circle class="chart-dot" cx="260" cy="170" r="3.5"/>
+              <circle class="chart-dot" cx="360" cy="140" r="3.5"/>
+              <circle class="chart-dot" cx="510" cy="110" r="3.5"/>
+              <circle class="chart-dot" cx="610" cy="115" r="3.5"/>
+              <circle class="chart-dot" cx="710" cy="75" r="3.5"/>
+            </g>
+            <!-- x labels -->
+            <g class="chart-axis">
+              <text x="60" y="310" text-anchor="middle">1 abr</text>
+              <text x="210" y="310" text-anchor="middle">7 abr</text>
+              <text x="360" y="310" text-anchor="middle">14 abr</text>
+              <text x="510" y="310" text-anchor="middle">21 abr</text>
+              <text x="660" y="310" text-anchor="middle">28 abr</text>
+              <text x="760" y="310" text-anchor="middle">Hoy</text>
+            </g>
+          </svg>
+        </div>
+        <div class="legend">
+          <span><span class="legend-line" style="background: var(--green)"></span>Período actual</span>
+          <span><span class="legend-line" style="background: var(--gray-soft); border-top: 1px dashed var(--gray-soft);"></span>Período anterior</span>
+          <span style="margin-left: auto;"><span class="legend-dot" style="background: var(--amber)"></span>Cambios que hiciste</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FUNNEL -->
+    <section class="section">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">El recorrido de la gente</h2>
+          <div class="sec-sub">Qué pasó desde que vieron tu anuncio hasta que se convirtieron en personas interesadas.</div>
+        </div>
+      </div>
+
+      <div class="funnel-wrap">
+        <div class="funnel-intro">
+          De cada 100 personas que vieron tu anuncio, sólo unas pocas terminan dando un paso más. Acá ves dónde estás perdiendo gente y dónde estás ganando.
+        </div>
+
+        <div class="funnel-steps">
+
+          <div class="fstep">
+            <div class="fstep-bar">
+              <div class="fstep-name">Vieron tu anuncio</div>
+              <div class="fstep-count">124.300</div>
+            </div>
+            <div class="fstep-meta">100% del total</div>
+          </div>
+          <div class="fstep-arrow">de esas, 2.890 (2,3%) hicieron clic — está dentro del promedio normal</div>
+
+          <div class="fstep">
+            <div class="fstep-bar">
+              <div class="fstep-name">Hicieron clic en el anuncio</div>
+              <div class="fstep-count">2.890</div>
+            </div>
+            <div class="fstep-meta">2,3% de quienes vieron</div>
+          </div>
+          <div class="fstep-arrow">de esas, 1.640 (57%) realmente abrieron el sitio — perdés gente acá, puede ser carga lenta</div>
+
+          <div class="fstep">
+            <div class="fstep-bar">
+              <div class="fstep-name">Llegaron a tu sitio</div>
+              <div class="fstep-count">1.640</div>
+            </div>
+            <div class="fstep-meta">57% de los clics</div>
+          </div>
+          <div class="fstep-arrow">de esas, 347 (21%) dejaron sus datos o te escribieron — buen ratio</div>
+
+          <div class="fstep">
+            <div class="fstep-bar">
+              <div class="fstep-name">Personas interesadas</div>
+              <div class="fstep-count">347</div>
+            </div>
+            <div class="fstep-meta">21% de las visitas<br><strong style="color: var(--navy)">$716 cada una</strong></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- HEATMAP -->
+    <section class="section">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">Cuándo te ven más</h2>
+          <div class="sec-sub">Días y horas en que tu público interactúa más con tus anuncios.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="heatmap-grid">
+          <!-- header row -->
+          <div></div>
+          <div class="hm-day-label">Lun</div>
+          <div class="hm-day-label">Mar</div>
+          <div class="hm-day-label">Mié</div>
+          <div class="hm-day-label">Jue</div>
+          <div class="hm-day-label">Vie</div>
+          <div class="hm-day-label">Sáb</div>
+          <div class="hm-day-label">Dom</div>
+
+          <!-- 6-8h -->
+          <div class="hm-time-label">6 — 8h</div>
+          <div class="hm-cell" style="--intensity:0.10" title="Lun 6-8h: 145 personas"></div>
+          <div class="hm-cell" style="--intensity:0.12"></div>
+          <div class="hm-cell" style="--intensity:0.10"></div>
+          <div class="hm-cell" style="--intensity:0.14"></div>
+          <div class="hm-cell" style="--intensity:0.18"></div>
+          <div class="hm-cell" style="--intensity:0.22"></div>
+          <div class="hm-cell" style="--intensity:0.28"></div>
+
+          <!-- 8-10h -->
+          <div class="hm-time-label">8 — 10h</div>
+          <div class="hm-cell" style="--intensity:0.32"></div>
+          <div class="hm-cell" style="--intensity:0.35"></div>
+          <div class="hm-cell" style="--intensity:0.30"></div>
+          <div class="hm-cell" style="--intensity:0.40"></div>
+          <div class="hm-cell" style="--intensity:0.42"></div>
+          <div class="hm-cell" style="--intensity:0.50"></div>
+          <div class="hm-cell" style="--intensity:0.60"></div>
+
+          <!-- 10-12h -->
+          <div class="hm-time-label">10 — 12h</div>
+          <div class="hm-cell" style="--intensity:0.45"></div>
+          <div class="hm-cell" style="--intensity:0.48"></div>
+          <div class="hm-cell" style="--intensity:0.46"></div>
+          <div class="hm-cell" style="--intensity:0.55"></div>
+          <div class="hm-cell" style="--intensity:0.50"></div>
+          <div class="hm-cell" style="--intensity:0.62"></div>
+          <div class="hm-cell" style="--intensity:0.70"></div>
+
+          <!-- 12-14h -->
+          <div class="hm-time-label">12 — 14h</div>
+          <div class="hm-cell" style="--intensity:0.60"></div>
+          <div class="hm-cell" style="--intensity:0.65"></div>
+          <div class="hm-cell" style="--intensity:0.62"></div>
+          <div class="hm-cell" style="--intensity:0.70"></div>
+          <div class="hm-cell" style="--intensity:0.66"></div>
+          <div class="hm-cell" style="--intensity:0.55"></div>
+          <div class="hm-cell" style="--intensity:0.58"></div>
+
+          <!-- 14-16h -->
+          <div class="hm-time-label">14 — 16h</div>
+          <div class="hm-cell" style="--intensity:0.40"></div>
+          <div class="hm-cell" style="--intensity:0.45"></div>
+          <div class="hm-cell" style="--intensity:0.42"></div>
+          <div class="hm-cell" style="--intensity:0.50"></div>
+          <div class="hm-cell" style="--intensity:0.46"></div>
+          <div class="hm-cell" style="--intensity:0.40"></div>
+          <div class="hm-cell" style="--intensity:0.45"></div>
+
+          <!-- 16-18h -->
+          <div class="hm-time-label">16 — 18h</div>
+          <div class="hm-cell" style="--intensity:0.55"></div>
+          <div class="hm-cell" style="--intensity:0.60"></div>
+          <div class="hm-cell" style="--intensity:0.58"></div>
+          <div class="hm-cell" style="--intensity:0.65"></div>
+          <div class="hm-cell" style="--intensity:0.55"></div>
+          <div class="hm-cell" style="--intensity:0.50"></div>
+          <div class="hm-cell" style="--intensity:0.48"></div>
+
+          <!-- 18-20h -->
+          <div class="hm-time-label">18 — 20h</div>
+          <div class="hm-cell" style="--intensity:0.70"></div>
+          <div class="hm-cell" style="--intensity:0.85"></div>
+          <div class="hm-cell" style="--intensity:0.78"></div>
+          <div class="hm-cell" style="--intensity:0.88"></div>
+          <div class="hm-cell" style="--intensity:0.82"></div>
+          <div class="hm-cell" style="--intensity:0.62"></div>
+          <div class="hm-cell" style="--intensity:0.55"></div>
+
+          <!-- 20-22h -->
+          <div class="hm-time-label">20 — 22h</div>
+          <div class="hm-cell" style="--intensity:0.85"></div>
+          <div class="hm-cell" style="--intensity:0.96"></div>
+          <div class="hm-cell" style="--intensity:0.88"></div>
+          <div class="hm-cell" style="--intensity:0.95"></div>
+          <div class="hm-cell" style="--intensity:0.78"></div>
+          <div class="hm-cell" style="--intensity:0.55"></div>
+          <div class="hm-cell" style="--intensity:0.50"></div>
+
+          <!-- 22-24h -->
+          <div class="hm-time-label">22 — 24h</div>
+          <div class="hm-cell" style="--intensity:0.55"></div>
+          <div class="hm-cell" style="--intensity:0.62"></div>
+          <div class="hm-cell" style="--intensity:0.58"></div>
+          <div class="hm-cell" style="--intensity:0.60"></div>
+          <div class="hm-cell" style="--intensity:0.50"></div>
+          <div class="hm-cell" style="--intensity:0.42"></div>
+          <div class="hm-cell" style="--intensity:0.38"></div>
+
+          <!-- 0-6h -->
+          <div class="hm-time-label">0 — 6h</div>
+          <div class="hm-cell" style="--intensity:0.10"></div>
+          <div class="hm-cell" style="--intensity:0.12"></div>
+          <div class="hm-cell" style="--intensity:0.10"></div>
+          <div class="hm-cell" style="--intensity:0.14"></div>
+          <div class="hm-cell" style="--intensity:0.18"></div>
+          <div class="hm-cell" style="--intensity:0.22"></div>
+          <div class="hm-cell" style="--intensity:0.18"></div>
+
+        </div>
+
+        <div class="hm-legend">
+          <span>Menos actividad</span>
+          <div class="hm-scale">
+            <div class="hm-scale-cell" style="background: rgba(91,138,110,0.10)"></div>
+            <div class="hm-scale-cell" style="background: rgba(91,138,110,0.30)"></div>
+            <div class="hm-scale-cell" style="background: rgba(91,138,110,0.50)"></div>
+            <div class="hm-scale-cell" style="background: rgba(91,138,110,0.70)"></div>
+            <div class="hm-scale-cell" style="background: rgba(91,138,110,0.95)"></div>
+          </div>
+          <span>Más actividad</span>
+        </div>
+
+        <div class="hm-callout">
+          Tu mejor momento es <strong>martes y jueves entre 20 y 22h</strong>. Si tenés presupuesto limitado, conviene concentrarlo ahí. <strong>Sábados y domingos a la tarde</strong> casi no rinden.
+        </div>
+      </div>
+    </section>
+
+    <!-- BREAKDOWNS -->
+    <section class="section">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">Dónde y desde qué</h2>
+          <div class="sec-sub">En qué redes, dispositivos y lugares se ven tus anuncios.</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+
+        <!-- PLATFORM -->
+        <div class="card bd-card">
+          <div class="bd-title">Por dónde te ven</div>
+          <div class="bd-sub">Distribución del alcance por red y formato</div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name"><span class="ico" style="background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5); color:#fff;">IG</span> Instagram Reels</span>
+              <span class="bd-row-value">42%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:84%; background: var(--green)"></div></div>
+            <div class="bd-row-meta">52K personas · <strong>$612 por interesado</strong></div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name"><span class="ico" style="background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5); color:#fff;">IG</span> Instagram Stories</span>
+              <span class="bd-row-value">24%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:48%; background: var(--green)"></div></div>
+            <div class="bd-row-meta">30K personas · <strong>$748 por interesado</strong></div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name"><span class="ico" style="background:#1877F2; color:#fff;">FB</span> Facebook Feed</span>
+              <span class="bd-row-value">18%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:36%; background: var(--amber)"></div></div>
+            <div class="bd-row-meta">22K personas · <strong>$890 por interesado</strong></div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name"><span class="ico" style="background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5); color:#fff;">IG</span> Instagram Feed</span>
+              <span class="bd-row-value">11%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:22%; background: var(--amber)"></div></div>
+            <div class="bd-row-meta">14K personas · <strong>$820 por interesado</strong></div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name"><span class="ico" style="background:#1877F2; color:#fff;">FB</span> Facebook Stories</span>
+              <span class="bd-row-value">5%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:10%; background: var(--red)"></div></div>
+            <div class="bd-row-meta">6K personas · <strong>$1.240 por interesado</strong></div>
+          </div>
+        </div>
+
+        <!-- DEVICE -->
+        <div class="card bd-card">
+          <div class="bd-title">Desde qué dispositivo</div>
+          <div class="bd-sub">Casi todos te ven desde el celular</div>
+
+          <div class="device-donut">
+            <div class="donut-mini">
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="44" fill="none" stroke="#F5F3EF" stroke-width="16"/>
+                <circle cx="55" cy="55" r="44" fill="none" stroke="#5B8A6E" stroke-width="16"
+                  stroke-dasharray="248 276" stroke-dashoffset="0"/>
+                <circle cx="55" cy="55" r="44" fill="none" stroke="#C49B48" stroke-width="16"
+                  stroke-dasharray="28 276" stroke-dashoffset="-248"/>
+              </svg>
+              <div class="donut-center">
+                <div>
+                  <div class="big">90%</div>
+                  <div class="lbl">Móvil</div>
+                </div>
+              </div>
+            </div>
+            <div class="device-stats">
+              <div class="device-stat"><span style="color:var(--green); font-weight:600;">● Móvil</span><span>90%</span></div>
+              <div class="device-stat"><span style="color:var(--amber); font-weight:600;">● Computadora</span><span>10%</span></div>
+              <div style="border-top: 1px dashed var(--gray-soft); padding-top: 10px; font-size: 11px; color: var(--gray); line-height: 1.4;">
+                Móvil: <strong style="color: var(--navy)">$680</strong> por interesado<br>
+                Compu: <strong style="color: var(--navy)">$1.040</strong> por interesado
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top: 1px dashed var(--gray-soft); padding-top: 14px; font-size: 12px; color: var(--gray); line-height: 1.5;">
+            Tu sitio se está cargando bien en celular. Si querés mejorar el costo, hay poco para ganar afinando la versión escritorio (es muy poco tráfico).
+          </div>
+        </div>
+
+        <!-- LOCATION -->
+        <div class="card bd-card">
+          <div class="bd-title">Desde dónde te ven</div>
+          <div class="bd-sub">Top 5 ciudades por cantidad de personas alcanzadas</div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name">Buenos Aires (CABA + GBA)</span>
+              <span class="bd-row-value">48%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:96%; background: var(--green)"></div></div>
+            <div class="bd-row-meta">60K personas · 168 interesados</div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name">Córdoba</span>
+              <span class="bd-row-value">14%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:28%; background: var(--green)"></div></div>
+            <div class="bd-row-meta">17K personas · 52 interesados</div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name">Rosario</span>
+              <span class="bd-row-value">9%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:18%; background: var(--amber)"></div></div>
+            <div class="bd-row-meta">11K personas · 30 interesados</div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name">Mendoza</span>
+              <span class="bd-row-value">7%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:14%; background: var(--amber)"></div></div>
+            <div class="bd-row-meta">9K personas · 24 interesados</div>
+          </div>
+
+          <div class="bd-row">
+            <div class="bd-row-top">
+              <span class="bd-row-name">La Plata</span>
+              <span class="bd-row-value">5%</span>
+            </div>
+            <div class="bd-row-bar"><div class="bd-row-fill" style="width:10%; background: var(--gray)"></div></div>
+            <div class="bd-row-meta">6K personas · 14 interesados</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CAMPAIGN TABLE -->
+    <section class="section">
+      <div class="sec-head">
+        <div>
+          <h2 class="sec-title">Campañas en detalle</h2>
+          <div class="sec-sub">Vista completa con todos los números. Hacé click en una columna para ordenar.</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <span class="pill">Todas las campañas ▾</span>
+          <span class="pill">Exportar</span>
+        </div>
+      </div>
+
+      <div class="card tbl-card">
+        <table class="perf">
+          <thead>
+            <tr>
+              <th>Campaña</th>
+              <th>Estado</th>
+              <th class="right">Gasto <span class="sort">▼</span></th>
+              <th class="right">Personas <span class="sort">▼</span></th>
+              <th class="right">Clics <span class="sort">▼</span></th>
+              <th class="right">Interesados <span class="sort">▼</span></th>
+              <th class="right">Costo x interesado <span class="sort">▼</span></th>
+              <th class="right">Tendencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="tbl-name">
+                  <div>
+                    <div class="nm">Promo otoño — Catálogo nuevo</div>
+                    <div class="meta">Instagram + Facebook · 18 días corriendo</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge good"><span class="dot"></span>Bien</span></td>
+              <td class="right"><span class="num">$98.200</span></td>
+              <td class="right"><span class="num">52.4K</span><span class="delta-mini up">+22%</span></td>
+              <td class="right"><span class="num">1.124</span><span class="delta-mini up">+18%</span></td>
+              <td class="right"><span class="num">158</span><span class="delta-mini up">+24%</span></td>
+              <td class="right"><span class="num">$621</span><span class="delta-mini up">−9%</span></td>
+              <td class="right">
+                <div class="tbl-spark" style="margin-left: auto;">
+                  <svg viewBox="0 0 70 24" preserveAspectRatio="none"><path fill="none" stroke="#5B8A6E" stroke-width="1.5" d="M0,18 L10,16 L20,14 L30,12 L40,10 L50,7 L60,5 L70,3"/></svg>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="tbl-name">
+                  <div>
+                    <div class="nm">Más seguidores — Reels</div>
+                    <div class="meta">Instagram · 9 días corriendo</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge warn"><span class="dot"></span>Aprendiendo</span></td>
+              <td class="right"><span class="num">$58.400</span></td>
+              <td class="right"><span class="num">31.8K</span><span class="delta-mini up">+nuevo</span></td>
+              <td class="right"><span class="num">622</span></td>
+              <td class="right"><span class="num">82</span></td>
+              <td class="right"><span class="num">$712</span></td>
+              <td class="right">
+                <div class="tbl-spark" style="margin-left: auto;">
+                  <svg viewBox="0 0 70 24" preserveAspectRatio="none"><path fill="none" stroke="#C49B48" stroke-width="1.5" d="M0,20 L10,18 L20,16 L30,15 L40,12 L50,11 L60,10 L70,8"/></svg>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="tbl-name">
+                  <div>
+                    <div class="nm">Recordatorio — Carritos abandonados</div>
+                    <div class="meta">Facebook · 26 días corriendo</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge bad"><span class="dot"></span>Atención</span></td>
+              <td class="right"><span class="num">$48.900</span></td>
+              <td class="right"><span class="num">12.1K</span><span class="delta-mini down">−14%</span></td>
+              <td class="right"><span class="num">198</span><span class="delta-mini down">−28%</span></td>
+              <td class="right"><span class="num">22</span><span class="delta-mini down">−40%</span></td>
+              <td class="right"><span class="num">$2.222</span><span class="delta-mini down">+62%</span></td>
+              <td class="right">
+                <div class="tbl-spark" style="margin-left: auto;">
+                  <svg viewBox="0 0 70 24" preserveAspectRatio="none"><path fill="none" stroke="#C4484A" stroke-width="1.5" d="M0,5 L10,7 L20,9 L30,11 L40,14 L50,16 L60,18 L70,20"/></svg>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="tbl-name">
+                  <div>
+                    <div class="nm">Conocé la marca</div>
+                    <div class="meta">Instagram + Facebook · 31 días corriendo</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge good"><span class="dot"></span>Bien</span></td>
+              <td class="right"><span class="num">$22.500</span></td>
+              <td class="right"><span class="num">18.6K</span><span class="delta-mini up">+8%</span></td>
+              <td class="right"><span class="num">412</span><span class="delta-mini up">+5%</span></td>
+              <td class="right"><span class="num">38</span></td>
+              <td class="right"><span class="num">$592</span><span class="delta-mini up">−4%</span></td>
+              <td class="right">
+                <div class="tbl-spark" style="margin-left: auto;">
+                  <svg viewBox="0 0 70 24" preserveAspectRatio="none"><path fill="none" stroke="#5B8A6E" stroke-width="1.5" d="M0,12 L10,11 L20,12 L30,10 L40,11 L50,9 L60,10 L70,8"/></svg>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <div class="tbl-name">
+                  <div>
+                    <div class="nm">Black Friday (anterior)</div>
+                    <div class="meta">Instagram + Facebook · pausada hace 12 días</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="badge off"><span class="dot"></span>Pausada</span></td>
+              <td class="right"><span class="num">$20.700</span></td>
+              <td class="right"><span class="num">9.2K</span></td>
+              <td class="right"><span class="num">534</span></td>
+              <td class="right"><span class="num">47</span></td>
+              <td class="right"><span class="num">$440</span></td>
+              <td class="right">
+                <div class="tbl-spark" style="margin-left: auto;">
+                  <svg viewBox="0 0 70 24" preserveAspectRatio="none"><path fill="none" stroke="#898A8E" stroke-width="1.5" stroke-dasharray="2 2" d="M0,8 L10,9 L20,8 L30,12 L40,14 L50,18 L60,20 L70,22"/></svg>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="foot-note">
+      Datos sincronizados con Meta — última actualización hace 2 minutos
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>
