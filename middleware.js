@@ -8,6 +8,10 @@ export default withAuth({
 });
 
 export const config = {
-  // Corre en todas las rutas excepto /api/auth/*, /login, archivos estáticos.
-  matcher: ['/((?!api/auth|login|_next|favicon.ico|.*\\..*).*)'],
+  // Corre en todas las rutas excepto:
+  //  - /api/auth/*  → endpoints de NextAuth
+  //  - /api/mcp     → endpoint del MCP server (auth propio por Bearer token)
+  //  - /login       → la pantalla de login
+  //  - assets estáticos
+  matcher: ['/((?!api/auth|api/mcp|login|_next|favicon.ico|.*\\..*).*)'],
 };
