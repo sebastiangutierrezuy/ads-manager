@@ -157,8 +157,16 @@ export default async function AnunciosPage({ searchParams }) {
                         <div className="val">{fmt.num(ad._clicks)}</div>
                       </div>
                       <div>
+                        <div className="lbl">CTR</div>
+                        <div className="val">{ad._reach > 0 ? ((ad._clicks / ad._reach) * 100).toFixed(2) + '%' : '—'}</div>
+                      </div>
+                      <div>
                         <div className="lbl">Interesados</div>
                         <div className="val">{fmt.num(ad._results)}</div>
+                      </div>
+                      <div>
+                        <div className="lbl">Costo x int.</div>
+                        <div className="val">{ad._results > 0 ? fmt.money(ad._spend / ad._results) : '—'}</div>
                       </div>
                     </div>
                   </div>

@@ -1152,20 +1152,24 @@ table.perf td.right { text-align: right; }
 }
 .ad-list-stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 12px;
   padding-top: 14px;
   border-top: 1px solid var(--light-bg);
 }
 .ad-list-stats .lbl {
-  font-size: 10px; letter-spacing: 0.6px;
+  font-size: 10px; letter-spacing: 0.5px;
   text-transform: uppercase; color: var(--gray);
   margin-bottom: 3px;
+  white-space: nowrap;
 }
 .ad-list-stats .val {
   font-family: var(--font-display);
-  font-size: 16px; font-weight: 600;
+  font-size: 15px; font-weight: 600;
   letter-spacing: -0.3px;
+}
+@media (max-width: 1024px) {
+  .ad-list-stats { grid-template-columns: repeat(2, 1fr); }
 }
 .ad-load-more-wrap {
   display: flex;
