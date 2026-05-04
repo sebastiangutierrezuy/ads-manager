@@ -9,9 +9,14 @@ export default withAuth({
 
 export const config = {
   // Corre en todas las rutas excepto:
-  //  - /api/auth/*  → endpoints de NextAuth
-  //  - /api/mcp     → endpoint del MCP server (auth propio por Bearer token)
-  //  - /login       → la pantalla de login
+  //  - /api/auth/*           → endpoints de NextAuth
+  //  - /api/mcp              → endpoint del MCP server (Bearer / OAuth JWT)
+  //  - /api/mcp/token        → OAuth token endpoint
+  //  - /api/mcp/authorize    → OAuth authorize endpoint (sí pasa por middleware
+  //    porque NECESITA verificar la sesión NextAuth — pero el middleware solo
+  //    redirige a /login si no hay sesión, lo cual es exactamente lo que queremos)
+  //  - /.well-known/*        → OAuth metadata
+  //  - /login                → la pantalla de login
   //  - assets estáticos
-  matcher: ['/((?!api/auth|api/mcp|login|_next|favicon.ico|.*\\..*).*)'],
+  matcher: ['/((?!api/auth|api/mcp/token|api/mcp$|\\.well-known|login|_next|favicon.ico|.*\\..*).*)'],
 };

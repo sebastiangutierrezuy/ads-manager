@@ -15,6 +15,7 @@
  */
 
 import { TOOLS, isConfigured } from '@/mcp/tools.mjs';
+import { verifyJwt } from '@/lib/mcpOauth';
 
 const PROTOCOL_VERSION = '2024-11-05';
 const SERVER_INFO = { name: 'atlantico-meta-ads', version: '1.1.0' };
@@ -91,24 +92,46 @@ async function handleRpc(req) {
   }
 }
 
-function unauthorized() {
+function unauthorized(request) {
+  // Le indicamos a Claude (u otro cliente MCP) dónde están los metadatos
+  // OAuth, así puede iniciar el flujo si se autenticó mal.
+  const baseUrl = process.env.NEXTAUTH_URL || `${request.headers.get('x-forwarded-proto') || 'https'}://${request.headers.get('host')}`;
   return new Response(JSON.stringify({ error: 'Unauthorized' }), {
     status: 401,
-    headers: { 'Content-Type': 'application/json', 'WWW-Authenticate': 'Bearer' },
+    headers: {
+      'Content-Type': 'application/json',
+      'WWW-Authenticate': `Bearer realm="mcp", resource_metadata="${baseUrl}/.well-known/oauth-authorization-server"`,
+    },
   });
 }
 
-function checkAuth(request) {
-  const expected = process.env.MCP_BEARER_TOKEN;
-  if (!expected) return false;            // sin token configurado, todo bloqueado
+/**
+ * Acepta autenticación por:
+ *   - JWT emitido por nuestro OAuth flow (Claude.ai web/desktop/mobile)
+ *   - Bearer estático MCP_BEARER_TOKEN (uso local / scripts / curl)
+ */
+async function checkAuth(request) {
   const auth = request.headers.get('authorization') || '';
   if (!auth.toLowerCase().startsWith('bearer ')) return false;
-  const got = auth.slice(7).trim();
-  return got === expected;
+  const token = auth.slice(7).trim();
+
+  // 1) ¿Es nuestro Bearer estático?
+  const staticToken = process.env.MCP_BEARER_TOKEN;
+  if (staticToken && token === staticToken) return true;
+
+  // 2) ¿Es un JWT emitido por nuestro OAuth?
+  try {
+    const payload = await verifyJwt(token);
+    if (payload.type === 'access_token') return true;
+  } catch {
+    // JWT inválido o expirado — caer en false
+  }
+
+  return false;
 }
 
 export async function POST(request) {
-  if (!checkAuth(request)) return unauthorized();
+  if (!(await checkAuth(request))) return unauthorized(request);
 
   let body;
   try {
@@ -135,7 +158,7 @@ export async function POST(request) {
 export async function GET(request) {
   // Algunos clientes hacen GET para verificar que el endpoint existe.
   // Devolvemos info pública del server (sin tools — eso requiere auth).
-  if (!checkAuth(request)) return unauthorized();
+  if (!(await checkAuth(request))) return unauthorized(request);
   return Response.json({
     name: SERVER_INFO.name,
     version: SERVER_INFO.version,
