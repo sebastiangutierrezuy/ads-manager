@@ -1,15 +1,15 @@
-import { getServerSession } from 'next-auth/next';
-import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/authOptions';
-import LoginButton from '@/components/LoginButton';
+import { getServerSession } from "next-auth/next";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/authOptions";
+import LoginButton from "@/components/LoginButton";
 
 export const metadata = {
-  title: 'Iniciar sesión — Centro de Publicidad',
+  title: "Iniciar sesión — Ads manager",
 };
 
 export default async function LoginPage({ searchParams }) {
   const session = await getServerSession(authOptions);
-  if (session?.user) redirect('/');
+  if (session?.user) redirect("/");
 
   const sp = await searchParams;
   const error = sp?.error;
@@ -24,15 +24,15 @@ export default async function LoginPage({ searchParams }) {
 
         <h1 className="login-title">Iniciá sesión</h1>
         <p className="login-sub">
-          Acceso restringido al equipo de Atlántico Estudio.
-          Ingresá con tu cuenta de Google Workspace.
+          Acceso restringido al equipo de Atlántico Estudio. Ingresá con tu
+          cuenta de Google Workspace.
         </p>
 
         {error && (
           <div className="login-error">
-            {error === 'AccessDenied'
-              ? 'Tu cuenta no pertenece al dominio autorizado. Pedí acceso al admin.'
-              : 'No pudimos iniciarte sesión. Intentá de nuevo.'}
+            {error === "AccessDenied"
+              ? "Tu cuenta no pertenece al dominio autorizado. Pedí acceso al admin."
+              : "No pudimos iniciarte sesión. Intentá de nuevo."}
           </div>
         )}
 
